@@ -41,7 +41,19 @@
                         <input type="checkbox" id="special" checked>
                         <label for="special">Специальные символы (!@#$%...)</label>
                     </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="multiple-passwords">
+                        <label for="multiple-passwords">Несколько паролей</label>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="multiple-passwords-section" id="multiple-passwords-section">
+                <div class="form-group">
+                    <label for="passwords-count">Количество паролей:</label>
+                    <input type="number" id="passwords-count" class="count-input" min="2" max="50" value="5">
+                </div>
+                <button id="save-btn" class="save-btn">Сохранить в файл</button>
             </div>
             
             <div class="error-message" id="generator-error"></div>
@@ -94,7 +106,7 @@
     <footer>
         <p>Используйте этот инструмент для создания и проверки надежных паролей</p>
     </footer>
-
+        
     <script src="script.js"></script>
 </body>
 </html>

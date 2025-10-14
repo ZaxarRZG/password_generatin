@@ -1,328 +1,362 @@
-/* style.css */
 :root {
-    --dark: #1A141A;
-    --dark-brown: #423738;
-    --brown: #8E5915;
-    --beige: #D3AF85;
-    --gold: #F4B315;
-    --orange: #E59312;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: var(--dark);
-    color: var(--beige);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    width: 100%;
-}
-
-h1 {
-    color: var(--gold);
-    margin-bottom: 0.5rem;
-    font-size: 2.5rem;
-}
-
-.subtitle {
-    color: var(--beige);
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
-    max-width: 1000px;
-    width: 100%;
-}
-
-.section {
-    background-color: var(--dark-brown);
-    border-radius: 10px;
-    padding: 1.5rem;
-    flex: 1;
-    min-width: 300px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-h2 {
-    color: var(--gold);
-    margin-bottom: 1.5rem;
-    text-align: center;
-    border-bottom: 1px solid var(--brown);
-    padding-bottom: 0.5rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--beige);
-}
-
-.slider-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-input[type="range"] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 8px;
-    border-radius: 4px;
-    background: var(--brown);
-    outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--gold);
-    cursor: pointer;
-}
-
-.length-value {
-    font-weight: bold;
-    color: var(--gold);
-    min-width: 30px;
-    text-align: center;
-}
-
-.checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--gold);
-}
-
-.checkbox-item.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.checkbox-item.disabled input {
-    cursor: not-allowed;
-}
-
-button {
-    background-color: var(--gold);
-    color: var(--dark);
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
-    width: 100%;
-    margin-top: 0.5rem;
-}
-
-button:hover {
-    background-color: var(--orange);
-}
-
-button:disabled {
-    background-color: var(--dark-brown);
-    color: var(--brown);
-    cursor: not-allowed;
-}
-
-.password-display {
-    display: flex;
-    margin-top: 1.5rem;
-    gap: 0.5rem;
-}
-
-.password-display input {
-    flex: 1;
-    padding: 0.8rem;
-    border-radius: 5px;
-    border: 1px solid var(--brown);
-    background-color: var(--dark);
-    color: var(--beige);
-    font-size: 1rem;
-}
-
-.copy-btn {
-    width: auto;
-    padding: 0.8rem 1rem;
-}
-
-.checker-input {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 5px;
-    border: 1px solid var(--brown);
-    background-color: var(--dark);
-    color: var(--beige);
-    font-size: 1rem;
-    margin-bottom: 1rem;
-}
-
-.strength-meter {
-    height: 10px;
-    border-radius: 5px;
-    background-color: var(--dark);
-    margin-bottom: 1rem;
-    overflow: hidden;
-}
-
-.strength-fill {
-    height: 100%;
-    width: 0%;
-    transition: width 0.5s, background-color 0.5s;
-}
-
-.strength-text {
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-top: 1rem;
-}
-
-.strength-poor {
-    color: var(--orange);
-}
-
-.strength-good {
-    color: var(--gold);
-}
-
-.strength-excellent {
-    color: var(--beige);
-}
-
-.requirements {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--brown);
-}
-
-.requirements h3 {
-    color: var(--gold);
-    margin-bottom: 0.8rem;
-}
-
-.requirement-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.requirement-status {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: var(--brown);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-}
-
-.requirement-met {
-    background-color: var(--gold);
-    color: var(--dark);
-}
-
-.error-message {
-    color: var(--orange);
-    margin-top: 0.5rem;
-    text-align: center;
-    font-size: 0.9rem;
-    min-height: 1.2rem;
-}
-
-footer {
-    margin-top: 2rem;
-    text-align: center;
-    color: var(--beige);
-    font-size: 0.9rem;
-    width: 100%;
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    body {
-        padding: 1rem;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-    
-    .container {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    
-    .section {
-        width: 100%;
-        padding: 1rem;
-    }
-    
-    .password-display {
-        flex-direction: column;
-    }
-    
-    .copy-btn {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.7rem;
-    }
-    
-    h2 {
-        font-size: 1.3rem;
-    }
-    
-    .subtitle {
-        font-size: 1rem;
-    }
-    
-    .checkbox-group {
-        font-size: 0.9rem;
-    }
-    
-    .requirements {
-        font-size: 0.9rem;
-    }
-}
+            --dark: #1A141A;
+            --dark-brown: #423738;
+            --brown: #8E5915;
+            --beige: #D3AF85;
+            --gold: #F4B315;
+            --orange: #E59312;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--beige);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        h1 {
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: var(--beige);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        .section {
+            background-color: var(--dark-brown);
+            border-radius: 10px;
+            padding: 1.5rem;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+        }
+        
+        h2 {
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--brown);
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--beige);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--brown);
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+        }
+        
+        .length-value {
+            font-weight: bold;
+            color: var(--gold);
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gold);
+        }
+        
+        .checkbox-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .checkbox-item.disabled input {
+            cursor: not-allowed;
+        }
+        
+        button {
+            background-color: var(--gold);
+            color: var(--dark);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        
+        button:hover {
+            background-color: var(--orange);
+        }
+        
+        button:disabled {
+            background-color: var(--dark-brown);
+            color: var(--brown);
+            cursor: not-allowed;
+        }
+        
+        .password-display {
+            display: flex;
+            margin-top: 1.5rem;
+            gap: 0.5rem;
+        }
+        
+        .password-display input {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--brown);
+            background-color: var(--dark);
+            color: var(--beige);
+            font-size: 1rem;
+        }
+        
+        .copy-btn {
+            width: auto;
+            padding: 0.8rem 1rem;
+        }
+        
+        .checker-input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--brown);
+            background-color: var(--dark);
+            color: var(--beige);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .strength-meter {
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--dark);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s, background-color 0.5s;
+        }
+        
+        .strength-text {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+        
+        .strength-poor {
+            color: var(--orange);
+        }
+        
+        .strength-good {
+            color: var(--gold);
+        }
+        
+        .strength-excellent {
+            color: var(--beige);
+        }
+        
+        .requirements {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--brown);
+        }
+        
+        .requirements h3 {
+            color: var(--gold);
+            margin-bottom: 0.8rem;
+        }
+        
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .requirement-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--brown);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .requirement-met {
+            background-color: var(--gold);
+            color: var(--dark);
+        }
+        
+        .error-message {
+            color: var(--orange);
+            margin-top: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+        
+        .multiple-passwords-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--brown);
+            display: none;
+        }
+        
+        .multiple-passwords-section.active {
+            display: block;
+        }
+        
+        .count-input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--brown);
+            background-color: var(--dark);
+            color: var(--beige);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .save-btn {
+            background-color: var(--brown);
+        }
+        
+        .save-btn:hover {
+            background-color: var(--orange);
+        }
+        
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--beige);
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .section {
+                width: 100%;
+                padding: 1rem;
+            }
+            
+            .password-display {
+                flex-direction: column;
+            }
+            
+            .copy-btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.7rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .checkbox-group {
+                font-size: 0.9rem;
+            }
+            
+            .requirements {
+                font-size: 0.9rem;
+            }
+        }
