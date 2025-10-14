@@ -140,12 +140,64 @@ document.addEventListener('DOMContentLoaded', function() {
                 return password;
             }
             
+            // Анимация генерации пароля
+            function animatePasswordGeneration(finalPassword) {
+                const length = finalPassword.length;
+                let steps = 0;
+                const maxSteps = 15;
+                const animationSpeed = 50; // ms
+                
+                // Функция для генерации случайного символа из доступных наборов
+                function getRandomChar() {
+                    const includeNumbers = numbersCheckbox.checked;
+                    const includeLowercase = lowercaseCheckbox.checked;
+                    const includeUppercase = uppercaseCheckbox.checked;
+                    const includeSpecial = specialCheckbox.checked;
+                    
+                    let charSet = '';
+                    if (includeNumbers) charSet += numberChars;
+                    if (includeLowercase) charSet += lowercaseChars;
+                    if (includeUppercase) charSet += uppercaseChars;
+                    if (includeSpecial) charSet += specialChars;
+                    
+                    if (charSet.length === 0) charSet = numberChars; // fallback
+                    
+                    const randomIndex = Math.floor(Math.random() * charSet.length);
+                    return charSet[randomIndex];
+                }
+                
+                // Анимация
+                const interval = setInterval(() => {
+                    let animatedPassword = '';
+                    for (let i = 0; i < length; i++) {
+                        // Постепенно заменяем случайные символы на финальные
+                        if (steps > i * (maxSteps / length) || steps === maxSteps - 1) {
+                            animatedPassword += finalPassword[i];
+                        } else {
+                            animatedPassword += getRandomChar();
+                        }
+                    }
+                    
+                    generatedPassword.value = animatedPassword;
+                    generatedPassword.classList.add('password-generating');
+                    
+                    steps++;
+                    if (steps >= maxSteps) {
+                        clearInterval(interval);
+                        generatedPassword.value = finalPassword;
+                        setTimeout(() => {
+                            generatedPassword.classList.remove('password-generating');
+                        }, 500);
+                    }
+                }, animationSpeed);
+            }
+            
             // Генерация пароля
             generateBtn.addEventListener('click', function() {
                 if (!validateGeneratorOptions()) return;
                 
                 const password = generatePassword();
-                generatedPassword.value = password;
+                animatePasswordGeneration(password);
                 checkPasswordStrength(password);
             });
             
@@ -271,19 +323,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Определение уровня надежности
                 strengthFill.style.width = `${strength}%`;
                 
-                if (strength <= 40) {
-                    strengthFill.style.backgroundColor = '#E59312';
-                    strengthText.textContent = 'Плохой';
-                    strengthText.className = 'strength-text strength-poor';
+                // Установка цвета и текста в зависимости от силы пароля
+                let strengthLevel = 1;
+                let strengthLabel = 'Фигня';
+                
+                if (strength <= 20) {
+                    strengthFill.style.backgroundColor = '#D32F2F';
+                    strengthLevel = 1;
+                    strengthLabel = 'Фигня';
+                } else if (strength <= 40) {
+                    strengthFill.style.backgroundColor = '#F57C00';
+                    strengthLevel = 2;
+                    strengthLabel = 'Плохой';
+                } else if (strength <= 60) {
+                    strengthFill.style.backgroundColor = '#FFB300';
+                    strengthLevel = 3;
+                    strengthLabel = 'Нормально';
                 } else if (strength <= 80) {
-                    strengthFill.style.backgroundColor = '#F4B315';
-                    strengthText.textContent = 'Хороший';
-                    strengthText.className = 'strength-text strength-good';
+                    strengthFill.style.backgroundColor = '#AED581';
+                    strengthLevel = 4;
+                    strengthLabel = 'Хороший';
                 } else {
-                    strengthFill.style.backgroundColor = '#D3AF85';
-                    strengthText.textContent = 'Отличный';
-                    strengthText.className = 'strength-text strength-excellent';
+                    strengthFill.style.backgroundColor = '#388E3C';
+                    strengthLevel = 5;
+                    strengthLabel = 'Идеальный';
                 }
+                
+                strengthText.textContent = strengthLabel;
+                strengthText.className = `strength-text strength-${strengthLevel}`;
             }
             
             function resetRequirements() {
