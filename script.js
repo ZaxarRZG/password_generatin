@@ -272,7 +272,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Получаем номер для имени файла
         const fileCounter = getFileCounter();
-        const fileName = `Password_${fileCounter.toString().padStart(3, '0')}.txt`;
+        // Новый формат имени файла: Password_5_001.txt
+        const fileName = `Password_${count}_${fileCounter.toString().padStart(3, '0')}.txt`;
         
         // Увеличиваем счетчик
         incrementFileCounter();
@@ -465,6 +466,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const passwordItem = document.createElement('div');
             passwordItem.className = 'password-item';
             
+            // Добавляем задержку для анимации появления
+            passwordItem.style.animationDelay = `${index * 0.05}s`;
+            
             passwordItem.innerHTML = `
                 <div>
                     <div class="password-text">${entry.password}</div>
@@ -487,6 +491,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Добавляем обработчики для кнопок копирования в журнале
         document.querySelectorAll('.history-copy-btn').forEach(button => {
+            // Удаляем существующие обработчики, чтобы избежать дублирования
+            button.replaceWith(button.cloneNode(true));
+        });
+        
+        // Добавляем новые обработчики
+        document.querySelectorAll('.history-copy-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const password = this.getAttribute('data-password');
                 copyToClipboard(password, this);
@@ -500,10 +510,10 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(() => {
                 const originalText = button.textContent;
                 button.textContent = 'Скопировано!';
-                button.style.backgroundColor = '#388E3C';
+                button.classList.add('copied');
                 setTimeout(() => {
                     button.textContent = originalText;
-                    button.style.backgroundColor = '';
+                    button.classList.remove('copied');
                 }, 2000);
             })
             .catch(err => {
@@ -518,10 +528,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const originalText = button.textContent;
                 button.textContent = 'Скопировано!';
-                button.style.backgroundColor = '#388E3C';
+                button.classList.add('copied');
                 setTimeout(() => {
                     button.textContent = originalText;
-                    button.style.backgroundColor = '';
+                    button.classList.remove('copied');
                 }, 2000);
             });
     }

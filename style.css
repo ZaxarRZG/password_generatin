@@ -481,6 +481,9 @@ button:disabled {
     padding: 0.8rem;
     border-bottom: 1px solid var(--brown);
     transition: background-color 0.3s;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: slideInItem 0.4s ease-out forwards;
 }
 
 .password-item:last-child {
@@ -516,10 +519,16 @@ button:disabled {
     padding: 0.4rem 0.8rem;
     width: auto;
     font-size: 0.8rem;
+    transition: all 0.3s;
 }
 
 .history-copy-btn:hover {
     background-color: var(--brown);
+}
+
+.history-copy-btn.copied {
+    background-color: var(--strength-5);
+    color: white;
 }
 
 .empty-history {
@@ -611,6 +620,17 @@ footer {
     100% { 
         opacity: 1;
         letter-spacing: normal;
+    }
+}
+
+@keyframes slideInItem {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
