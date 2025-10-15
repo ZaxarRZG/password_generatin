@@ -429,6 +429,7 @@ button:disabled {
 .history-actions {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .history-count-select {
@@ -451,6 +452,18 @@ button:disabled {
     background-color: var(--brown);
 }
 
+.download-history-btn {
+    background-color: var(--brown);
+    color: var(--beige);
+    border: 1px solid var(--brown);
+    padding: 0.5rem 1rem;
+    width: auto;
+}
+
+.download-history-btn:hover {
+    background-color: var(--orange);
+}
+
 .passwords-list {
     background-color: var(--dark-brown);
     border-radius: 10px;
@@ -458,6 +471,7 @@ button:disabled {
     max-height: 400px;
     overflow-y: auto;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
 .password-item {
@@ -513,6 +527,38 @@ button:disabled {
     color: var(--beige);
     padding: 2rem;
     font-style: italic;
+}
+
+.history-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 1rem;
+}
+
+.pagination-btn {
+    background-color: var(--dark-brown);
+    color: var(--beige);
+    border: 1px solid var(--brown);
+    padding: 0.5rem 1rem;
+    width: auto;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: var(--brown);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    color: var(--beige);
+    font-size: 0.9rem;
 }
 
 footer {
@@ -639,5 +685,14 @@ footer {
     
     .history-title {
         font-size: 1.3rem;
+    }
+    
+    .history-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .history-actions button {
+        width: 100%;
     }
 }

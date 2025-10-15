@@ -30,7 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Элементы журнала
     const historyCountSelect = document.getElementById('history-count-select');
     const clearHistoryBtn = document.getElementById('clear-history-btn');
+    const downloadHistoryBtn = document.getElementById('download-history-btn');
     const passwordsList = document.getElementById('passwords-list');
+    const prevPageBtn = document.getElementById('prev-page-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
+    const pageInfo = document.getElementById('page-info');
     
     // Наборы символов для генерации паролей
     const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
@@ -40,12 +44,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Ключ для localStorage
     const PASSWORD_HISTORY_KEY = 'passwordGeneratorHistory';
+    const FILE_COUNTER_KEY = 'passwordFileCounter';
     
     // Максимальное количество паролей в истории
     const MAX_HISTORY_SIZE = 100;
     
+    // Пагинация
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    
     // Инициализация истории паролей
     let passwordHistory = loadPasswordHistory();
+    
+    // Получение счетчика файлов
+    function getFileCounter() {
+        let counter = localStorage.getItem(FILE_COUNTER_KEY);
+        if (!counter) {
+            counter = 1;
+            localStorage.setItem(FILE_COUNTER_KEY, counter);
+        }
+        return parseInt(counter);
+    }
+    
+    // Увеличение счетчика файлов
+    function incrementFileCounter() {
+        let counter = getFileCounter() + 1;
+        localStorage.setItem(FILE_COUNTER_KEY, counter);
+        return counter;
+    }
     
     // Обновление значения длины пароля
     lengthSlider.addEventListener('input', function() {
@@ -239,20 +265,30 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 1; i <= count; i++) {
             const password = generatePassword();
             passwordsContent += `${i}. ${password}\n`;
+            
+            // Добавляем каждый пароль в историю
+            addPasswordToHistory(password);
         }
+        
+        // Получаем номер для имени файла
+        const fileCounter = getFileCounter();
+        const fileName = `Password_${fileCounter.toString().padStart(3, '0')}.txt`;
+        
+        // Увеличиваем счетчик
+        incrementFileCounter();
         
         // Создание и скачивание файла
         const blob = new Blob([passwordsContent], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'passwords.txt';
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        generatorError.textContent = `Файл с ${count} паролями сохранен!`;
+        generatorError.textContent = `Файл ${fileName} с ${count} паролями сохранен!`;
         setTimeout(() => {
             generatorError.textContent = '';
         }, 3000);
@@ -403,7 +439,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Обновление списка паролей в журнале
     function updatePasswordsList() {
         const count = parseInt(historyCountSelect.value);
-        const passwordsToShow = passwordHistory.slice(0, count);
+        const totalPages = Math.ceil(passwordHistory.length / itemsPerPage);
+        
+        // Корректируем текущую страницу, если необходимо
+        if (currentPage > totalPages) {
+            currentPage = Math.max(1, totalPages);
+        }
+        
+        // Рассчитываем индексы для отображаемых элементов
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, passwordHistory.length);
+        const passwordsToShow = passwordHistory.slice(startIndex, endIndex);
         
         // Очищаем список
         passwordsList.innerHTML = '';
@@ -414,7 +460,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Добавляем пароли в список
-        passwordsToShow.forEach(entry => {
+        passwordsToShow.forEach((entry, index) => {
+            const globalIndex = startIndex + index + 1;
             const passwordItem = document.createElement('div');
             passwordItem.className = 'password-item';
             
@@ -430,6 +477,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             passwordsList.appendChild(passwordItem);
         });
+        
+        // Обновляем информацию о странице
+        pageInfo.textContent = `Страница ${currentPage} из ${totalPages}`;
+        
+        // Обновляем состояние кнопок пагинации
+        prevPageBtn.disabled = currentPage <= 1;
+        nextPageBtn.disabled = currentPage >= totalPages;
         
         // Добавляем обработчики для кнопок копирования в журнале
         document.querySelectorAll('.history-copy-btn').forEach(button => {
@@ -477,13 +531,55 @@ document.addEventListener('DOMContentLoaded', function() {
         if (confirm('Вы уверены, что хотите очистить журнал паролей?')) {
             passwordHistory = [];
             savePasswordHistory();
+            currentPage = 1;
             updatePasswordsList();
         }
     });
     
+    // Скачивание журнала паролей
+    downloadHistoryBtn.addEventListener('click', function() {
+        if (passwordHistory.length === 0) {
+            alert('Журнал паролей пуст');
+            return;
+        }
+        
+        let passwordsContent = '';
+        passwordHistory.forEach((entry, index) => {
+            passwordsContent += `${index + 1}. ${entry.password} (${entry.date})\n`;
+        });
+        
+        // Создание и скачивание файла
+        const blob = new Blob([passwordsContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'password_history.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+    
     // Изменение количества отображаемых паролей
     historyCountSelect.addEventListener('change', function() {
+        currentPage = 1;
         updatePasswordsList();
+    });
+    
+    // Пагинация
+    prevPageBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePasswordsList();
+        }
+    });
+    
+    nextPageBtn.addEventListener('click', function() {
+        const totalPages = Math.ceil(passwordHistory.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            updatePasswordsList();
+        }
     });
     
     // Инициализация
