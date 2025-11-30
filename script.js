@@ -21,11 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password-input');
     const strengthFill = document.getElementById('strength-fill');
     const strengthText = document.getElementById('strength-text');
-    const lengthReq = document.getElementById('length-req');
-    const lowercaseReq = document.getElementById('lowercase-req');
-    const uppercaseReq = document.getElementById('uppercase-req');
-    const numbersReq = document.getElementById('numbers-req');
-    const specialReq = document.getElementById('special-req');
+    let lengthReq = document.getElementById('length-req');
+    let lowercaseReq = document.getElementById('lowercase-req');
+    let uppercaseReq = document.getElementById('uppercase-req');
+    let numbersReq = document.getElementById('numbers-req');
+    let specialReq = document.getElementById('special-req');
     
     // Элементы журнала
     const historyCountSelect = document.getElementById('history-count-select');
@@ -45,10 +45,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Максимальное количество паролей в истории
     const MAX_HISTORY_SIZE = 100;
+
+    // Списки небезопасных PIN-кодов
+    const unsafePins = [
+        // Топ-20 самых популярных PIN-кодов
+        "1234", "1111", "0000", "1212", "7777", "1004", "2000", "4444", 
+        "2222", "6969", "9999", "3333", "5555", "6666", "1122", "1313", 
+        "8888", "4321", "2001", "1010",
+        // Топ-20 самых частых конечных PIN-кодов
+        "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991",
+        "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999",
+        "2000", "2001", "2002", "2003"
+    ];
     
     // Инициализация истории паролей
     let passwordHistory = loadPasswordHistory();
     
+    // Сохраняем оригинальный HTML требований для пароля
+    const originalRequirementsHTML = document.querySelector('.requirements').innerHTML;
+
+    // Функция восстановления стандартных требований для пароля
+    function restoreOriginalRequirements() {
+        const requirementsContainer = document.querySelector('.requirements');
+        requirementsContainer.innerHTML = originalRequirementsHTML;
+        
+        // Обновляем ссылки на элементы требований
+        lengthReq = document.getElementById('length-req');
+        lowercaseReq = document.getElementById('lowercase-req');
+        uppercaseReq = document.getElementById('uppercase-req');
+        numbersReq = document.getElementById('numbers-req');
+        specialReq = document.getElementById('special-req');
+    }
+
     // Получение счетчика файлов
     function getFileCounter() {
         let counter = localStorage.getItem(FILE_COUNTER_KEY);
@@ -231,9 +259,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const password = generatePassword();
         animatePasswordGeneration(password);
+        
+        // ИСПРАВЛЕНИЕ БАГА 3: Проверяем сгенерированный пароль в поле проверки
+        passwordInput.value = password;
         checkPasswordStrength(password);
         
-        // Добавление пароля в историю
+        // ИСПРАВЛЕНИЕ БАГА 1: Добавление пароля в историю
         addPasswordToHistory(password);
     });
     
@@ -287,7 +318,120 @@ document.addEventListener('DOMContentLoaded', function() {
             generatorError.textContent = '';
         }, 3000);
     });
+
+    // Дополнительные проверки для PIN-кодов
+    function isUnsafePin(pin) {
+        // Проверка по списку популярных PIN-кодов
+        if (unsafePins.includes(pin)) {
+            return "популярный PIN-код";
+        }
+        
+        // Проверка на последовательности
+        if (isSequence(pin)) {
+            return "последовательность цифр";
+        }
+        
+        // Проверка на повторяющиеся цифры
+        if (isRepeating(pin)) {
+            return "повторяющиеся цифры";
+        }
+        
+        // Проверка на палиндромы
+        if (isPalindrome(pin)) {
+            return "палиндром";
+        }
+        
+        // Проверка на годы (1900-2025)
+        if (isYear(pin)) {
+            return "год рождения";
+        }
+        
+        return null;
+    }
     
+    function isSequence(pin) {
+        const digits = pin.split('').map(Number);
+        
+        // Восходящая последовательность (1234, 2345, etc.)
+        let ascending = true;
+        for (let i = 1; i < digits.length; i++) {
+            if (digits[i] !== digits[i-1] + 1) {
+                ascending = false;
+                break;
+            }
+        }
+        
+        // Нисходящая последовательность (4321, 5432, etc.)
+        let descending = true;
+        for (let i = 1; i < digits.length; i++) {
+            if (digits[i] !== digits[i-1] - 1) {
+                descending = false;
+                break;
+            }
+        }
+        
+        return ascending || descending;
+    }
+    
+    function isRepeating(pin) {
+        // Все цифры одинаковые (1111, 2222, etc.)
+        if (new Set(pin.split('')).size === 1) {
+            return true;
+        }
+        
+        // Пары одинаковых цифр (1122, 1212, etc.)
+        const pairs = [
+            /^(.)\1(.)\2$/, // AABB
+            /^(.)(.)\1\2$/, // ABAB
+            /^(.)(.)(.)\3$/, // ABCA
+        ];
+        
+        return pairs.some(pattern => pattern.test(pin));
+    }
+    
+    function isPalindrome(pin) {
+        return pin === pin.split('').reverse().join('');
+    }
+    
+    function isYear(pin) {
+        const year = parseInt(pin);
+        return year >= 1900 && year <= 2025;
+    }
+    
+    // Функция показа требований для PIN-кода
+    function showPinRequirements(pin, unsafeReason) {
+        const requirementsContainer = document.querySelector('.requirements');
+        
+        // Создаем кастомные требования для PIN-кодов
+        const customRequirements = [
+            { id: 'pin-popular', text: 'Не популярный PIN', met: !unsafeReason || !unsafeReason.includes('популярный') },
+            { id: 'pin-sequence', text: 'Не последовательность', met: !isSequence(pin) },
+            { id: 'pin-repeat', text: 'Не повторяющиеся цифры', met: !isRepeating(pin) },
+            { id: 'pin-palindrome', text: 'Не палиндром', met: !isPalindrome(pin) },
+            { id: 'pin-year', text: 'Не год рождения', met: !isYear(pin) },
+            { id: 'pin-entropy', text: 'Высокая энтропия', met: calculatePinEntropy(pin) >= 2 }
+        ];
+        
+        // Обновляем отображение требований
+        const requirementsHTML = customRequirements.map(req => `
+            <div class="requirement-item">
+                <div class="requirement-status ${req.met ? 'requirement-met' : ''}">${req.met ? '✓' : '!'}</div>
+                <span>${req.text}</span>
+            </div>
+        `).join('');
+        
+        requirementsContainer.innerHTML = `
+            <h3>Требования к PIN-коду:</h3>
+            ${requirementsHTML}
+            <div class="pin-warning">PIN-код должен быть сложным и непредсказуемым</div>
+        `;
+    }
+
+    // Функция показа требований для пароля
+    function showPasswordRequirements() {
+        restoreOriginalRequirements();
+    }
+
     // Проверка надежности пароля
     passwordInput.addEventListener('input', function() {
         checkPasswordStrength(this.value);
@@ -302,8 +446,18 @@ document.addEventListener('DOMContentLoaded', function() {
             strengthFill.style.backgroundColor = '';
             strengthText.textContent = 'Введите пароль';
             strengthText.className = 'strength-text';
+            showPasswordRequirements(); // Показываем стандартные требования
             return;
         }
+        
+        // Специальная проверка для PIN-кодов (4 цифры)
+        if (password.length === 4 && /^\d+$/.test(password)) {
+            checkPinStrength(password);
+            return;
+        }
+        
+        // Для обычных паролей показываем стандартные требования
+        showPasswordRequirements();
         
         let strength = 0;
         let requirementsMet = 0;
@@ -353,6 +507,63 @@ document.addEventListener('DOMContentLoaded', function() {
         strengthFill.style.width = `${strength}%`;
         
         // Установка цвета и текста в зависимости от силы пароля
+        updateStrengthDisplay(strength);
+    }
+    
+    function checkPinStrength(pin) {
+        // Показываем требования для PIN-кода
+        let strength = 0;
+        let strengthLabel = '';
+        let reason = '';
+        
+        // Проверка на небезопасные комбинации
+        const unsafeReason = isUnsafePin(pin);
+        
+        if (unsafeReason) {
+            strength = 20; // Очень слабый
+            strengthLabel = 'Очень слабый PIN';
+            reason = ` - ${unsafeReason}`;
+        } else {
+            // Проверка энтропии PIN-кода
+            const entropy = calculatePinEntropy(pin);
+            
+            if (entropy < 2) {
+                strength = 40;
+                strengthLabel = 'Слабый PIN';
+            } else if (entropy < 3) {
+                strength = 60;
+                strengthLabel = 'Средний PIN';
+            } else {
+                strength = 80;
+                strengthLabel = 'Надежный PIN';
+            }
+        }
+        
+        strengthFill.style.width = `${strength}%`;
+        strengthText.textContent = strengthLabel + reason;
+        updateStrengthDisplay(strength);
+        
+        // Показываем дополнительную информацию для PIN-кодов
+        showPinRequirements(pin, unsafeReason);
+    }
+    
+    function calculatePinEntropy(pin) {
+        const digits = pin.split('');
+        const uniqueDigits = new Set(digits).size;
+        
+        // Базовая энтропия на основе уникальных цифр
+        let entropy = Math.log2(Math.pow(10, uniqueDigits));
+        
+        // Уменьшаем энтропию для предсказуемых паттернов
+        if (isSequence(pin)) entropy *= 0.3;
+        if (isRepeating(pin)) entropy *= 0.4;
+        if (isPalindrome(pin)) entropy *= 0.5;
+        if (isYear(pin)) entropy *= 0.6;
+        
+        return Math.max(entropy, 0.1);
+    }
+    
+    function updateStrengthDisplay(strength) {
         let strengthLevel = 1;
         let strengthLabel = 'Фигня';
         
@@ -378,7 +589,10 @@ document.addEventListener('DOMContentLoaded', function() {
             strengthLabel = 'Идеальный';
         }
         
-        strengthText.textContent = strengthLabel;
+        // Обновляем текст только если он не был установлен в checkPinStrength
+        if (!strengthText.textContent.includes('PIN')) {
+            strengthText.textContent = strengthLabel;
+        }
         strengthText.className = `strength-text strength-${strengthLevel}`;
     }
     
@@ -386,8 +600,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const requirements = [lengthReq, lowercaseReq, uppercaseReq, numbersReq, specialReq];
         
         requirements.forEach(req => {
-            req.textContent = '!';
-            req.classList.remove('requirement-met');
+            if (req) {
+                req.textContent = '!';
+                req.classList.remove('requirement-met');
+            }
         });
     }
     
@@ -549,7 +765,36 @@ document.addEventListener('DOMContentLoaded', function() {
         updatePasswordsList();
     });
     
+    // ИСПРАВЛЕНИЕ БАГА: Инициализация ползунка при загрузке
+    function initializeSlider() {
+        // Всегда устанавливаем значение 8 при загрузке
+        lengthSlider.value = 8;
+        lengthValue.textContent = '8';
+        
+        // Сбрасываем состояние чекбоксов для длины 8
+        uppercaseItem.classList.remove('disabled');
+        specialItem.classList.remove('disabled');
+        uppercaseCheckbox.disabled = false;
+        specialCheckbox.disabled = false;
+        lowercaseCheckbox.disabled = false;
+        
+        // Убеждаемся, что чекбоксы в правильном состоянии
+        numbersCheckbox.checked = true;
+        lowercaseCheckbox.checked = true;
+        uppercaseCheckbox.checked = true;
+        specialCheckbox.checked = true;
+    }
+    
+    // ИСПРАВЛЕНИЕ БАГА 2: Сброс состояния чекбокса "Несколько паролей" при загрузке
+    function initializeMultiplePasswords() {
+        // Сбрасываем состояние чекбокса
+        multiplePasswordsCheckbox.checked = false;
+        multiplePasswordsSection.classList.remove('active');
+    }
+    
     // Инициализация
+    initializeSlider(); // Инициализируем ползунок
+    initializeMultiplePasswords(); // Инициализируем состояние чекбокса нескольких паролей
     validateGeneratorOptions();
     generateBtn.click();
     updatePasswordsList();

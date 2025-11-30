@@ -318,11 +318,13 @@ button:disabled {
     margin-top: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid var(--brown);
+    transition: all 0.3s ease;
 }
 
 .requirements h3 {
     color: var(--gold);
     margin-bottom: 0.8rem;
+    transition: all 0.3s ease;
 }
 
 .requirement-item {
@@ -331,6 +333,7 @@ button:disabled {
     gap: 0.5rem;
     margin-bottom: 0.5rem;
     transition: transform 0.3s;
+    padding: 0.3rem 0;
 }
 
 .requirement-item:hover {
@@ -347,6 +350,7 @@ button:disabled {
     justify-content: center;
     font-size: 0.8rem;
     transition: all 0.3s;
+    flex-shrink: 0;
 }
 
 .requirement-met {
@@ -580,6 +584,20 @@ footer {
     width: 100%;
     max-width: 1000px;
     animation: fadeIn 1.2s ease-out;
+}
+
+/* Добавляем в раздел пин-кодов */
+
+.pin-warning {
+    color: var(--orange);
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+    text-align: center;
+    font-style: italic;
+    padding: 0.5rem;
+    background-color: rgba(229, 147, 18, 0.1);
+    border-radius: 5px;
+    border-left: 3px solid var(--orange);
 }
 
 /* Анимации */
