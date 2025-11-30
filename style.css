@@ -398,7 +398,7 @@ button:disabled {
 }
 
 .save-btn {
-    background-color: var(--brown);
+    background-color: var(--gold);
 }
 
 .save-btn:hover {
@@ -453,9 +453,9 @@ button:disabled {
 }
 
 .download-history-btn {
-    background-color: var(--brown);
-    color: var(--beige);
-    border: 1px solid var(--brown);
+    background-color: var(--gold);
+    color: var(--dark);
+    border: none;
     padding: 0.5rem 1rem;
     width: auto;
 }
@@ -523,7 +523,7 @@ button:disabled {
 }
 
 .history-copy-btn:hover {
-    background-color: var(--brown);
+   background-color: var(--brown);
 }
 
 .history-copy-btn.copied {
