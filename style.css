@@ -539,7 +539,7 @@ button:disabled {
 }
 
 .history-pagination {
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     margin-top: 1rem;
@@ -547,6 +547,7 @@ button:disabled {
 }
 
 .pagination-btn {
+    display: none;
     background-color: var(--dark-brown);
     color: var(--beige);
     border: 1px solid var(--brown);
@@ -566,6 +567,7 @@ button:disabled {
 }
 
 .page-info {
+    display: none;
     color: var(--beige);
     font-size: 0.9rem;
 }
